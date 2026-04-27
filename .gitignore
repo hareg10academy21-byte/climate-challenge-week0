@@ -5,3 +5,18 @@ __pycache__/
 
 
 .env
+# ignore raw datasets only
+data/raw/
+
+# allow cleaned csv files for dashboard deployment
+!data/ethiopia_clean.csv
+!data/kenya_clean.csv
+!data/sudan_clean.csv
+!data/tanzania_clean.csv
+!data/nigeria_clean.csv
+
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.env
