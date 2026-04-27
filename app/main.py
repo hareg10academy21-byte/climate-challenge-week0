@@ -184,3 +184,71 @@ years, and climate variable.
 
 st.subheader("Filtered Dataset Preview")
 st.dataframe(filtered_df.head())
+
+
+
+
+
+
+
+
+
+
+
+# ----------------------------
+# Consecutive Dry Days Analysis
+# ----------------------------
+st.subheader("Consecutive Dry Days Analysis")
+
+# Sort properly first
+dry_df = filtered_df.sort_values(["Country", "Date"]).copy()
+
+# Create dry day flag
+dry_df["Dry_Day"] = dry_df["PRECTOTCORR"] < 1
+
+# Function to calculate longest consecutive dry streak
+def longest_dry_streak(group):
+    max_streak = 0
+    current_streak = 0
+
+    for day in group["Dry_Day"]:
+        if day:
+            current_streak += 1
+            max_streak = max(max_streak, current_streak)
+        else:
+            current_streak = 0
+
+    return max_streak
+
+# Calculate longest streak per country
+dry_streak_result = (
+    dry_df.groupby("Country")
+    .apply(longest_dry_streak)
+    .reset_index(name="Longest_Dry_Streak")
+)
+
+# Plot
+fig3, ax3 = plt.subplots(figsize=(8,5))
+
+sns.barplot(
+    data=dry_streak_result,
+    x="Country",
+    y="Longest_Dry_Streak",
+    ax=ax3
+)
+
+ax3.set_title("Longest Consecutive Dry Days by Country")
+ax3.set_xlabel("Country")
+ax3.set_ylabel("Days")
+
+st.pyplot(fig3)
+
+st.markdown("""
+**Insight:**
+
+This chart shows the longest consecutive dry period for each country.
+
+- Higher streaks indicate prolonged drought conditions  
+- Longer dry periods can affect agriculture and water supply  
+- Countries with longer streaks may require stronger climate adaptation policies
+""")
